@@ -1,0 +1,701 @@
+# # 新增个人维修记录
+# mutation{
+#   createRepairRecord(input:{
+    
+#     repairRecord:{
+#       #rprUuid: UUID
+#       # 办公用品维修申请UUID
+
+#       rprPiuuid: UUID!
+#       # 申请人UUID
+
+#       rprRena: String
+#       # 申请人姓名
+
+#       rprInco: String
+#       # 办公用品内部编码
+
+#       rprRrti: Datetime
+#       # 提交维修时间
+
+#       rprEram: String
+#       # 维修原因说明
+
+#       rprBrde: String
+#       # 故障详情
+
+#       rprErciid: String!
+#       # 员工申请类型ID
+
+#       rprApst: OmSqspzt
+#       # 申请审批状态：审核中，终审同意，终审驳回，撤销
+
+#       rprCcin: OmCsrinfoInput
+#       # 抄送人信息：个人UUID,姓名,抄送时间,接收人UUID,消息类型,处理消息命令组
+
+#       rprRpst: Int
+#       # 维修状态：0待维修，1维修中，2维修完成
+#     }
+#   })
+# }
+
+# 查询个人维修记录
+{
+  allRepairRecords{
+    nodes{
+      rprUuid
+      # 办公用品维修申请UUID
+
+      rprPiuuid
+      # 申请人UUID
+
+      rprRena
+      # 申请人姓名
+
+      rprInco
+      # 办公用品内部编码
+
+      rprRrti
+      # 提交维修时间
+
+      rprEram
+      # 维修原因说明
+
+      rprBrde
+      # 故障详情
+
+      rprErciid
+      # 员工申请类型ID
+
+      rprApst
+      # 申请审批状态：审核中，终审同意，终审驳回，撤销
+
+      rprCcin {
+        csPiuuid
+        csName
+        csTime
+      }
+      # 抄送人信息：个人UUID,姓名,抄送时间,接收人UUID,消息类型,处理消息命令组
+
+      rprRpst
+      # 维修状态：0待维修，1维修中，2维修完成
+    }
+  }
+}
+
+# 查询维修记录详情
+{
+  repairRecordByRprUuid(rprUuid:""){
+      rprUuid
+      # 办公用品维修申请UUID
+
+      rprPiuuid
+      # 申请人UUID
+
+      rprRena
+      # 申请人姓名
+
+      rprInco
+      # 办公用品内部编码
+
+      rprRrti
+      # 提交维修时间
+
+      rprEram
+      # 维修原因说明
+
+      rprBrde
+      # 故障详情
+
+      rprErciid
+      # 员工申请类型ID
+
+      rprApst
+      # 申请审批状态：审核中，终审同意，终审驳回，撤销
+
+      rprCcin {
+        csPiuuid
+        csName
+        csTime
+      }
+      # 抄送人信息：个人UUID,姓名,抄送时间,接收人UUID,消息类型,处理消息命令组
+
+      rprRpst
+      # 维修状态：0待维修，1维修中，2维修完成
+  }
+}
+
+
+
+
+
+# ---------------------------------------------------------------
+# # 新增审批节点
+mutation{ 
+  createDrawApprovalInfo(input:{
+    drawApprovalInfo:{
+      
+      daiApsn: Int!
+      # 节点序号
+
+      daiPiuuid: UUID!
+      # 审批人UUID
+
+      daiApti: Datetime
+      # 审批时间
+
+      daiLifi: Boolean
+      # 是否终审：true终审，false非终审
+
+      daiNepiuuid: UUID
+      # 下一审批人
+
+      daiApre: Boolean
+      # 审批结果:true同意,false不同意
+
+      drUuid: UUID!
+      # 领用申请记录UUID
+
+
+    }
+  }) {
+    clientMutationId
+  }
+
+}
+
+
+
+
+
+#更新申请审批信息
+mutation
+{
+  updateDrawApprovalInfoByDaiApsnAndDrUuid(input:{
+    
+      daiApsn: Int!
+      # 节点序号
+
+      drUuid: UUID!
+      # 领用申请记录UUID
+    drawApprovalInfoPatch:{
+    
+      daiApsn: Int!
+      # 节点序号
+
+      daiPiuuid: UUID!
+      # 审批人UUID
+
+      daiApti: Datetime
+      # 审批时间
+
+      daiLifi: Boolean!
+      # 是否终审：true终审，false非终审
+
+      daiNepiuuid: UUID
+      # 下一审批人
+
+      daiApre: Boolean
+      # 审批结果:true同意,false不同意
+
+      drUuid: UUID!
+      # 领用申请记录UUID  
+    }
+  }) {
+    clientMutationId
+  }
+   
+}
+
+
+
+# 更新领用申请状态信息
+mutation{
+  updateDrawRequestByDrUuid(input:{
+    drUuid: ""
+   
+  drawRequestPatch:{
+  
+    drApst: FINALCONSENT
+}}) {
+    clientMutationId
+  }
+}
+
+
+# 新增领用申请函数接口（父子表同步）
+
+# mutation
+# {
+#   insertDrawRequest(input:{
+    
+#     # 申请人UUID
+#     drPiuuid: "d886a105-6aef-4de1-b2e4-856b634e783f"
+    
+#     # 申请日期
+#     drReda: "20181214"
+    
+#     # 员工申请类型ID
+#     drErciid: "0002"
+    
+#     # 申请审批状态：审核中，终审同意，终审驳回，撤销
+#     drApst: INAUDIT
+    
+#     # 抄送人信息
+#     drCcin:[{
+#         csPiuuid: "c424817b-5f70-4d80-9078-7e37900a0489",
+#         csName: "特朗普",
+#         csTime: "20181207",
+#         receiverUuid: "c424817b-5f70-4d80-9078-7e37900a0489",
+#         messageType: "0003",
+#         # commands:{"name": "snowman.png"}
+#       },{
+#         csPiuuid: "1f424e56-294e-4773-80e0-8a6277c2d8fa",
+#         csName: "甘泉",
+#         csTime: "20181207",
+#         receiverUuid: "1f424e56-294e-4773-80e0-8a6277c2d8fa",
+#         messageType: "0003",
+#         # commands:{"name": "snowman.png"}
+#       }]
+    
+#     # 说明备注
+#     drMem: "String"
+    
+#     goods: jsonb
+    
+#   }) {
+#     clientMutationId
+#     uuid
+#   }
+# }
+
+
+
+
+
+
+
+
+# # 查询物品基本信息
+
+
+# query{
+#   allMaterialSuppliesBasicinfos{
+    
+#     nodes{
+      
+#       msbUuid
+#       # 办公用品UUID
+      
+#       msbScco
+#       # 供应商商品编码
+
+#       msbCoba
+#       # 商品条形码
+
+#       msbSuna
+#       # 办公用品名称
+
+#       msbCocu
+#       # 自定义分类
+
+#       msbUnme
+#       # 计量单位
+
+#       msbPaun
+#       # 包装单位
+
+#       msbUnco
+#       # 单位换算
+
+#       msbPioo
+#       # 物品图片
+
+#       msbDeog
+#       # 物品描述
+
+#       msbWape
+#       # 质保期
+
+#       msbRpup
+#       # 最近一次采购单价
+
+#       # msbAsuuid
+#       # 资产UUID（性质为资产时产生）
+
+
+
+#       msbPrcl
+#       # 商品性质归类
+
+#       msbStcode
+#       # 商品标准分类
+#     }
+#   }
+# }
+
+
+
+
+
+
+# 查询领用申请，申请物品细项及申请审批信息
+
+{
+  allDrawRequests(condition:{
+    
+  }){
+    nodes{
+      drUuid
+      # 领用申请记录UUID
+
+      drPiuuid
+      # 领用申请人UUID
+
+      drReda
+      # 申请日期
+
+      drErciid
+      # 员工申请类型ID
+
+      drApst
+      # 申请审批状态：审核中，终审同意，终审驳回，撤销
+
+      drCcin {
+        csPiuuid
+        csName
+        csTime
+
+
+      }
+      # 抄送人信息：个人UUID,姓名,抄送时间,接收人UUID,消息类型,处理消息命令组
+
+
+
+      drMem
+      # 申请备注说明
+      
+      
+
+      
+      # 审批信息
+      drawApprovalInfosByDrUuid{
+        nodes{
+          daiApsn
+          # 节点序号
+
+          daiPiuuid
+          # 审批人UUID
+
+          daiApti
+          # 审批时间
+
+          daiLifi
+          # 是否终审：true终审，false非终审
+
+          daiNepiuuid
+          # 下一审批人
+
+          daiApre
+          # 审批结果:true同意,false不同意
+
+          drUuid
+          # 领用申请记录UUID
+        }
+      }
+      
+      
+      # 申请项
+      drawRequestItemsByDrUuid{
+        nodes{
+          drUuid
+          # 领用申请记录UUID
+
+          drMsbuuid
+          # 办公商品UUID
+
+          drUnit
+          # 计量单位
+
+          drRenu
+          # 申请数量          
+        }
+
+      }
+      
+      # 领用记录状态
+      storageDrawRecordsBySdDruuid{
+        nodes{
+          sdUuid
+					# 领用记录ID
+          
+          sdDest
+          # 发货状态：true已发货，false代发货
+
+          sdCost
+          # 领取状态：true已领取，false未领取
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+# 获取员工可申请的类型
+{
+  allEmployeeRequestCategoryInfos{
+    nodes{
+      erciId
+      # 员工申请类型ID
+
+      erciName
+      # 员工申请类型名称
+    }
+  }
+}
+
+
+
+
+# 获取组织成员列表
+{
+  allOrganizationMembers{
+    nodes{
+      oiUuid
+      # 组织UUID
+
+      piUuid
+      # 成员个人UUID
+
+      omIfme
+      # 是否内部成员
+
+      omName
+      # 真实姓名
+
+      omUuid
+      # 外部成员的组织UUID
+
+      omEona
+      # 外部成员的组织名称
+
+      omPosi
+      # 职位名称
+    }
+  }
+}
+
+
+
+# #	组织内部成员列表
+# {
+#   allOrganizationMembers(orderBy: PRIMARY_KEY_ASC,condition: {omIfme:true}){
+#     nodes{
+      
+#       oiUuid
+#       # 组织UUID
+
+#       piUuid
+#       # 成员个人UUID
+
+
+#       omName
+#       # 真实姓名
+
+
+#       omPosi
+#       # 职位名称
+
+#     }
+#     totalCount
+#   }
+# }
+
+
+
+
+
+
+
+# 查询我的物品(我的物品是确认了的领用记录，这个同时也是查询领用记录的)
+{
+  allStorageDrawRecords(condition:{
+    sdDpiuuid:"d262695b-d1e5-4e54-af0a-ca0dab96f88c"
+  }){
+    nodes{
+      sdDruuid
+      # 来源领用申请dr_uuid
+
+      sdDpiuuid
+      # 领用人UUID
+
+      sdGpiuuid
+      # 发货人UUID
+
+      sdDrti
+      # 领用日期
+
+      sdDrnu
+      # 领用数量
+
+      sdUnme
+      # 计量单位
+
+      sdUuid
+      # 领用记录ID
+
+      sdMsbuuid
+      # 办公商品内部UUID
+      
+      materialSuppliesBasicinfoBySdMsbuuid{
+        msbScco
+        # 供应商商品编码
+
+        msbCoba
+        # 商品条形码
+
+        msbSuna
+        # 办公用品名称
+
+        msbCocu
+        # 自定义分类
+
+        msbUnme
+        # 计量单位
+
+        msbPaun
+        # 包装单位
+
+        msbUnco
+        # 单位换算
+
+        msbPioo
+        # 物品图片
+
+        msbDeog
+        # 物品描述
+
+        msbWape
+        # 质保期
+
+        msbRpup
+        # 最近一次采购单价
+
+        msbAsuuid
+        # 资产UUID（性质为资产时产生）
+
+        msbUuid
+        # 办公用品UUID
+
+        msbPrcl
+        # 商品性质归类
+
+        msbStcode
+        # 商品标准分类
+      }
+    }
+  }
+}
+
+
+
+# 更新领用记录中领取状态为已领取
+mutation{
+  updateStorageDrawRecordBySdUuid(input:{
+    sdUuid: "UUID!"
+    # 领用记录ID
+    storageDrawRecordPatch:{
+      sdCost: true
+    } 
+  })
+}
+
+
+
+# 依据领取物品查询物品基本信息以及领用信息、退回信息
+{
+  allStorageDrawRecordItems(condition:{
+    
+  }){
+    nodes{
+      driMsbuuid
+			# 办公商品UUID
+      materialSuppliesBasicinfoByDriMsbuuid{
+        msbScco
+        # 自定义商品编码
+
+        msbCoba
+        # 商品条形码
+
+        msbSuna
+        # 办公用品名称
+
+        msbCocu
+        # 自定义分类
+
+        msbUnme
+        # 计量单位
+
+        msbPaun
+        # 包装单位
+
+        msbUnco
+        # 单位换算
+
+        msbPioo
+        # 物品图片
+
+        msbDeog
+        # 物品描述
+
+        msbWape
+        # 质保期
+
+        msbRpup
+        # 最近一次采购单价
+
+        msbAsuuid
+        # 资产UUID（性质为资产时产生）
+
+        msbUuid
+        # 办公用品UUID
+
+        msbPrcl
+        # 商品性质归类
+
+        msbStcode
+        # 商品标准分类
+        
+        storageDrawRecordItemsByDriMsbuuid{
+          nodes{
+            driUuid
+            # 领用记录UUID
+
+            driMsbuuid
+            # 办公商品UUID
+
+            driUnit
+            # 计量单位
+
+            driRenu
+            # 领用数量
+          }
+        }
+        storageRetiringRecordsBySrMsbuuid{
+          nodes{
+            srRest
+						# 退回状态：true已退库,false退库中
+          }
+        }
+      }
+    }
+  }
+}
+
+

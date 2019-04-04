@@ -1,0 +1,24 @@
+@import '~antd/dist/antd.css';
+
+.content{
+    margin: 20px;
+}
+.content button{
+    margin-bottom: 10px;
+}
+.service-content{
+    margin-top:10px;
+}
+.service-content h3{
+    text-align: center;
+}
+.service-content p{
+    text-indent:20px;
+}
+.drawer-button{
+    margin:20px auto;
+    text-align: center;
+}
+.drawer-button button{
+    margin-right: 20px;
+}
