@@ -18,6 +18,9 @@ function formatArr(arr) {
         return str;
     }
 export const createMessages = async data => {
+    let personAvatar = remote.getGlobal("sharedObject").userenv.avatar;
+	let avatarHash =
+		personAvatar !== "" && personAvatar !== "{}" ? personAvatar.hash : "";
 	let query = {
 		query: `mutation {
               a:createApplicationMessage(input: {
@@ -28,7 +31,7 @@ export const createMessages = async data => {
                       senderName: "${
 							remote.getGlobal("sharedObject").userenv.realName
 						}"
-                      senderAvatarHash: "${data.applicationHash}"
+                      senderAvatarHash: "${avatarHash}"
                       receiverUuid: "${data.receiverUuid}"
                       receiverName: "${data.receiverName}"
                       messageText: "${data.messageText}"
@@ -92,12 +95,15 @@ export const updateMessageStatus = async messageUuid => {
 
 //消息群发
 export const createMuchMessages = async (data, person) => {
+    let personAvatar = remote.getGlobal("sharedObject").userenv.avatar;
+	let avatarHash =
+		personAvatar !== "" && personAvatar !== "{}" ? personAvatar.hash : "";
 	let condition = person.map(
 		(item, index) => ` a${index}:createApplicationMessage(input: {
         applicationMessage: {
             senderUuid: "${remote.getGlobal("sharedObject").userenv.uuid}"
             senderName: "${remote.getGlobal("sharedObject").userenv.realName}"
-            senderAvatarHash: "${data.applicationHash}"
+            senderAvatarHash: "${avatarHash}"
             receiverUuid: "${item.id}"
             receiverName: "${item.name}"
             messageText: "${data.messageText}"
