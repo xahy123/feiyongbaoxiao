@@ -23,7 +23,7 @@ export const getMyApply = async (condition) => {
 					condition.time ? `reCrea:{greaterThanOrEqualTo:"${condition.time[0]}",lessThanOrEqualTo:"${condition.time[1]}"}` : ""
 				}
 				${
-					condition.num == 1 ? `reStat:{notIn:[1,2]}` : condition.reStat ? `reStat:{in:[${condition.reStat}]}` : `reStat:{notIn:[1,2]}`
+					condition.num === 1 ? `reStat:{in:[1,2,0,3,4,5]}` : condition.reStat ? `reStat:{in:[${condition.reStat}]}` : `reStat:{in:[1,2,0,3,4,5]}`
 				}
 			}
 		){
