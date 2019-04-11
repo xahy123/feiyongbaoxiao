@@ -47,7 +47,6 @@ export const createMessages = async data => {
               }
           }`
 	};
-	console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "public_message_service",
@@ -123,7 +122,6 @@ export const createMuchMessages = async (data, person) => {
        ${condition.join(",")}
     }`
     };
-    console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "public_message_service",

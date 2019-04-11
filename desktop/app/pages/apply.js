@@ -86,7 +86,6 @@ export default class PartyMyContribution extends React.Component {
 			),
 		}]
 		deleteCourse = (index) => {
-			console.log(index);
 			let data = this.state.courseList;
 			data.splice(index,1);
 			this.setState({
@@ -98,25 +97,21 @@ export default class PartyMyContribution extends React.Component {
 		this.props.form.validateFields(["aa"],async (err, values) => {
 			if (!err) {
 				if(this.state.courseList.length>0){
-					console.log(values)
 					let price = [];
 					this.state.courseList.map(item => {
 						price.push(Number(item.price))
 					});
-					console.log(price);
 					//报销总额
 					const total = price.reduce((prev, cur)=>{
 						return prev + cur;
 					},0) //10 
-					console.log(total);
 					let newCourseList = this.state.courseList.map(item => {
 						item.fujian ? item.fujian = JSON.stringify(item.fujian).replace(/\"/g, '\\"') : null
 						item.description ? item.description = item.description.replace(/\n/g,'\\n') : null
 						return item
 					})
 					let res = await service.applyReimbursement(values,newCourseList);
-					console.log(res);
-					if(!res.statusCode && res.result){
+					if(!res.statusCode){
 						if(res.result.updateExpenseReimburseAskInfo){
 							message.success("提交成功");
 							this.setState({
@@ -124,7 +119,7 @@ export default class PartyMyContribution extends React.Component {
 								fileList1:[],
 								total,
 								isMoneyShow:true
-							},() => console.log("21321",this.state.courseList))
+							})
 							
 							this.props.form.resetFields();
 							var data = {
@@ -150,7 +145,6 @@ export default class PartyMyContribution extends React.Component {
 							};
 
 							let res2 = await createMessages(data);
-							console.log(res2)
 
 							var data2 = {
 								receiverAvatarHash: "",
@@ -172,7 +166,6 @@ export default class PartyMyContribution extends React.Component {
 								]
 							};
 							//抄送人
-							console.log(values.aa.cc)
 							if (values.aa.cc) {
 								if (values.aa.cc.length > 0) {
 									let person = values.aa.cc.map(item => {
@@ -185,7 +178,6 @@ export default class PartyMyContribution extends React.Component {
 										data2,
 										person
 									);
-									console.log(newRes)
 									if (res2.statusCode !== 0) {
 										return message.error("费用报销通知发送失败!");
 									}
@@ -209,13 +201,12 @@ export default class PartyMyContribution extends React.Component {
 		let data = await service.getMember();
 		let res2 = await service.getMomeny();
 		let cc = await service.getCc();
-		console.log(res2)
 		this.setState({
 			category:res.result,
 			member:data.result,
 			money:res2.result.calcRepayment,
 			cc:cc.result
-		},() => console.log(this.state.cc))
+		})
 	}
 
 	getAllApprover = async()=> {
@@ -244,7 +235,6 @@ export default class PartyMyContribution extends React.Component {
 	handleSublimt = () => {
 		this.props.form.validateFields(["bb"],async (err, values) => {
 			if(!err){
-				console.log(values);
 				let data = this.state.courseList;
 				data.push({
 					title:values.bb.title,
@@ -254,14 +244,14 @@ export default class PartyMyContribution extends React.Component {
 					fujian:this.state.fileList1,
 					
 				});
-				console.log("改动",data)
 				
 				this.setState({
 					courseList:data,
 					visible:false,
 					fileList1:[]
+				},() => {
+					this.props.form.resetFields(["bb"]);
 				})
-				this.props.form.resetFields(["bb"]);
 			}
 		})
 	}

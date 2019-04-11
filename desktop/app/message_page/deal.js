@@ -38,10 +38,9 @@ export default class MessageDeal extends React.Component {
 	columns = [
 		{
             title: '费用名称',
-            dataIndex: 'aoTime',
-            key: 'aoTime',
+            dataIndex: 'reName',
+            key: 'reName',
             align: 'center',
-            render:text => moment(text).format("YYYY-MM-DD")
         },{
             title: '费用报销说明',
             dataIndex: 'reDesc',
@@ -96,30 +95,42 @@ export default class MessageDeal extends React.Component {
 			fromWindow = BrowserWindow.fromId(fromWindowId);
 		});
 		let data = await getMember();
-		console.log(data)
 		this.setState({
 			member:data.result,
 		})
 	}
 	//同意
 	agree = async () => {
-		console.log(this.state.data)
-		this.setState({
-			visible:true,
-			num:3
-		})
+		let res = await getRecord(this.state.data.commands[0].params.reUuid);
+		if(res.result[0].reStat === 0) {
+			message.info("该申请已撤回");
+			let data = await updateMessageStatus(
+				this.state.data.messageUuid
+			);
+			fromWindow.webContents.send("from-ipc-message", {
+				orgUuid: this.state.data.orgUuid,
+				messageUuid: this.state.data.messageUuid,
+				messageStatus: data.result.messageStatus
+			});
+			setTimeout(() => {
+				window.close();
+			}, 2000);
+		}else{
+			this.setState({
+				visible:true,
+				num:3
+			})
+		}
 	}
 	handleOk = () => {
 		this.props.form.validateFields(["aa"],async (err, values) => {
 			if(!err){
-				console.log(values)
 				if(this.state.num==3){
 					//同意
 					let id = this.state.list[0].reUuid;
 					let name = this.state.data.receiverName;
 					let uuid = this.state.data.receiverUuid;
 					let res = await cancal(id,name,uuid,3);
-					console.log(res)
 					if(!res.statusCode && res.result){
 						message.success("操作成功")
 						let data = await updateMessageStatus(
@@ -163,10 +174,26 @@ export default class MessageDeal extends React.Component {
 		})
 	}
 	// //转发
-	forward = () => {
-		this.setState({
-			forwarVdisible:true
-		})
+	forward = async () => {
+		let res = await getRecord(this.state.data.commands[0].params.reUuid);
+		if(res.result[0].reStat === 0) {
+			message.info("该申请已撤回");
+			let data = await updateMessageStatus(
+				this.state.data.messageUuid
+			);
+			fromWindow.webContents.send("from-ipc-message", {
+				orgUuid: this.state.data.orgUuid,
+				messageUuid: this.state.data.messageUuid,
+				messageStatus: data.result.messageStatus
+			});
+			setTimeout(() => {
+				window.close();
+			}, 2000);
+		}else{
+			this.setState({
+				forwarVdisible:true
+			})
+		}
 	}
 	forwarHandleOk = () => {
 		this.props.form.validateFields(["bb"], async (err, values) => {
@@ -175,7 +202,6 @@ export default class MessageDeal extends React.Component {
 				let name = this.state.data.receiverName;
 				let uuid = this.state.data.receiverUuid;
 				let res = await cancal(id,name,uuid,5);
-				console.log(res);
 				if(!res.statusCode && res.result){
 					var data = {
 						receiverUuid: values.bb.approver.split("/")[0],
@@ -222,10 +248,26 @@ export default class MessageDeal extends React.Component {
 	}
 	// //驳回
 	reject = async () => {
-		this.setState({
-			visible:true,
-			num:4
-		})
+		let res = await getRecord(this.state.data.commands[0].params.reUuid);
+		if(res.result[0].reStat === 0) {
+			message.info("该申请已撤回");
+			let data = await updateMessageStatus(
+				this.state.data.messageUuid
+			);
+			fromWindow.webContents.send("from-ipc-message", {
+				orgUuid: this.state.data.orgUuid,
+				messageUuid: this.state.data.messageUuid,
+				messageStatus: data.result.messageStatus
+			});
+			setTimeout(() => {
+				window.close();
+			}, 2000);
+		}else{
+			this.setState({
+				visible:true,
+				num:4
+			})
+		}
 	}
 	read = async () => {
 		let data = await updateMessageStatus(
@@ -242,7 +284,6 @@ export default class MessageDeal extends React.Component {
 		}, 2000);
 	};
 	expandedRowRender = (record,index) => {
-		console.log(index)
 		const columns=[
 			{
 				title: '费用类别',
@@ -286,7 +327,6 @@ export default class MessageDeal extends React.Component {
 					);
 				}
 			}]
-		console.log("原始数据",this.state.list)
 		let goodsList = this.state.list[index].reItem.map(item => {
 			return {
 				...item
@@ -296,6 +336,7 @@ export default class MessageDeal extends React.Component {
     	return(
 			<Table
 				columns={columns}
+				style={{margin:0}}
 				rowKey={record => record.id}
         		dataSource={goodsList}
         		pagination={false}
@@ -310,7 +351,7 @@ export default class MessageDeal extends React.Component {
 					position:"absolute",
 					top:"50%",
 					left:"50%",
-					marginTop:"-88px",
+					marginTop:"-280px",
 					marginLeft:'-200px'
 				}}>
 					<Row>
@@ -324,6 +365,7 @@ export default class MessageDeal extends React.Component {
 					<Row style={{marginTop:10}}>
 						<Table 
 							size="middle"
+							width="412px"
 							loading={this.state.loading}
 							columns={this.columns} 
 							dataSource={this.state.list}

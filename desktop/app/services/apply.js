@@ -89,7 +89,6 @@ export const getCategory = async () => {
 			}
 		}`
 	};
-	console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "adm_data_service",
@@ -140,7 +139,6 @@ export const applyReimbursement = async (values,courseList) => {
 			}
 		}`
 	};
-	console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "adm_data_service",
@@ -152,7 +150,7 @@ export const applyReimbursement = async (values,courseList) => {
 		return {
 			statusCode: res.statusCode,
 			message: res.message,
-			result: res.statusCode === 0 && res.result.a ? res.result.a.nodes : res.result
+			result: res.statusCode === 0 && res.result ? res.result : res.result
 		};
 	});
 };
@@ -164,7 +162,6 @@ export const getMomeny = async (values,courseList) => {
 			calcRepayment(ipiUuid:"${piUuid}")
 		  }`
 	};
-	console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "adm_data_service",

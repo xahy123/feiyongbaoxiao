@@ -1,6 +1,6 @@
 //我的申请
 import React, { Component } from 'react';
-import { Table, Form, Row, Col, Modal , Select, Input, Button, DatePicker, message} from 'antd';
+import { Table, Form, Row, Col, Modal , Select, Input, Button, DatePicker, Tooltip, message} from 'antd';
 import MainHeader from '../components/main.header';
 // 获取组织uuid
 import { getUrlProps } from '../services/main';
@@ -45,7 +45,18 @@ export default class onDuty extends Component {
             title: '费用报销说明',
             dataIndex: 'reDesc',
             key: 'reDesc',
-            align: 'center'
+			align: 'center',
+			render:text => {
+				if(text.length>7){
+					return (
+						<Tooltip title={text}>
+							<span>{text.substring(0,7)}……</span>
+						</Tooltip>
+					)
+				}else{
+					return <span>{text}</span>
+				}
+			}
         },{
             title: '总额（元）',
             key: 'reJine',
@@ -93,7 +104,6 @@ export default class onDuty extends Component {
 	];
 	//撤回
 	withdraw = async (id) => {
-		console.log(id)
 		let data = await service.cancal(id,6);
 		if(!data.statusCode && data.result) {
 			message.success("操作成功")
@@ -106,7 +116,6 @@ export default class onDuty extends Component {
 		}
 	}
 	confirm = async (id) => {
-		console.log(id)
 		let data = await service.cancal(id,8);
 		if(!data.statusCode && data.result) {
 			message.success("操作成功")
@@ -132,7 +141,6 @@ export default class onDuty extends Component {
 		})
 	}
 	expandedRowRender = (record,index) => {
-		console.log(index)
 		const columns=[
 			{
 				title: '费用类别',
@@ -143,7 +151,18 @@ export default class onDuty extends Component {
 				title: '说明',
 				dataIndex: 'description',
 				key: 'description',
-				align:"center"
+				align:"center",
+				render:text => {
+					if(text.length>7){
+						return (
+							<Tooltip title={text}>
+								<span>{text.substring(0,7)}……</span>
+							</Tooltip>
+						)
+					}else{
+						return <span>{text}</span>
+					}
+				}
 			}, {
 				title: '报销金额（元）',
 				dataIndex: 'price',
@@ -176,7 +195,6 @@ export default class onDuty extends Component {
 					);
 				}
 			}]
-		console.log("原始数据",this.state.data)
 		let goodsList = this.state.data[index].reItem.map(item => {
 			return {
 				...item
@@ -186,6 +204,7 @@ export default class onDuty extends Component {
     	return(
 			<Table
 				columns={columns}
+				style={{margin:0}}
 				rowKey={record => record.id}
         		dataSource={goodsList}
         		pagination={false}
@@ -196,7 +215,6 @@ export default class onDuty extends Component {
 	handleFilter = () => {
 		this.props.form.validateFields(["bb"],(err, values) => {
 			if(!err){
-				console.log(values);
 				this.setState({
 					loading:true
 				},async () => {
@@ -259,6 +277,8 @@ export default class onDuty extends Component {
 											<Option value='0'>已撤回</Option>
 											<Option value='4'>已发放</Option>
 											<Option value='5'>确认已收</Option>
+											<Option value='1'>审核中</Option>
+											<Option value='2'>已驳回</Option>
 										</Select>
 									)
 								}

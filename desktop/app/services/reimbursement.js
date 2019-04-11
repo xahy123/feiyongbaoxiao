@@ -39,7 +39,6 @@ export const getMyApply = async (condition) => {
 		}
   	}`
   };
-	console.log(query)
   	const request = {
   	  object: 'organization',
   	  service_name: 'adm_data_service',
@@ -72,7 +71,6 @@ export const cancal = async (value,num) => {
 			}
 		}`
     };
-	console.log(query)
   	const request = {
   		object: 'organization',
   		service_name: 'adm_data_service',

@@ -38,10 +38,9 @@ export default class MessageDeal extends React.Component {
 	columns = [
 		{
             title: '费用名称',
-            dataIndex: 'aoTime',
-            key: 'aoTime',
+            dataIndex: 'reName',
+            key: 'reName',
             align: 'center',
-            render:text => moment(text).format("YYYY-MM-DD")
         },{
             title: '费用报销说明',
             dataIndex: 'reDesc',
@@ -96,137 +95,11 @@ export default class MessageDeal extends React.Component {
 			fromWindow = BrowserWindow.fromId(fromWindowId);
 		});
 		let data = await getMember();
-		console.log(data)
 		this.setState({
 			member:data.result,
 		})
 	}
-	//同意
-	agree = async () => {
-		console.log(this.state.data)
-		this.setState({
-			visible:true,
-			num:3
-		})
-	}
-	handleOk = () => {
-		this.props.form.validateFields(["aa"],async (err, values) => {
-			if(!err){
-				console.log(values)
-				if(this.state.num==3){
-					//同意
-					let id = this.state.list[0].reUuid;
-					let name = this.state.data.receiverName;
-					let uuid = this.state.data.receiverUuid;
-					let res = await cancal(id,name,uuid,3);
-					console.log(res)
-					if(!res.statusCode && res.result){
-						message.success("操作成功")
-						let data = await updateMessageStatus(
-							this.state.data.messageUuid
-						);
-						fromWindow.webContents.send("from-ipc-message", {
-							orgUuid: this.state.data.orgUuid,
-							messageUuid: this.state.data.messageUuid,
-							messageStatus: data.result.messageStatus
-						});
-						setTimeout(() => {
-							window.close();
-						}, 2000);
-					}else{
-						message.error("操作失败")
-					}
-				}
-				if(this.state.num==4){
-					//驳回
-					let id = this.state.list[0].reUuid;
-					let name = this.state.data.receiverName;
-					let uuid = this.state.data.receiverUuid;
-					let res = await cancal(id,name,uuid,4);
-					if(!res.statusCode && res.result){
-						message.success("操作成功")
-						let data = await updateMessageStatus(
-							this.state.data.messageUuid
-						);
-						fromWindow.webContents.send("from-ipc-message", {
-							orgUuid: this.state.data.orgUuid,
-							messageUuid: this.state.data.messageUuid,
-							messageStatus: data.result.messageStatus
-						});
-						setTimeout(() => {
-							window.close();
-						}, 2000);
-					}
-				}
-				
-			}
-		})
-	}
-	// //转发
-	forward = () => {
-		this.setState({
-			forwarVdisible:true
-		})
-	}
-	forwarHandleOk = () => {
-		this.props.form.validateFields(["bb"], async (err, values) => {
-			if(!err){
-				let id = this.state.list[0].reUuid;
-				let name = this.state.data.receiverName;
-				let uuid = this.state.data.receiverUuid;
-				let res = await cancal(id,name,uuid,5);
-				console.log(res);
-				if(!res.statusCode && res.result){
-					var data = {
-						receiverUuid: values.bb.approver.split("/")[0],
-						receiverName: values.bb.approver.split("/")[1],
-						receiverAvatarHash: "",
-						messageText: "有费用报销，请审批！",
-						messageType: "费用报销",
-						applicationUuid: this.state.data.applicationUuid,
-						applicationHash: this.state.data.applicationHash,
-						commands: [
-							{
-								title: "审批人查看",
-								type: "open-window",
-								params: `{
-									orgUuid: "${this.state.data.orgUuid}",
-									appUuid: "${this.state.data.appUuid}",
-									reUuid: "${this.state.list[0].reUuid}"
-								}`,
-								urlPath: "message/deal"
-							}
-						]
-					};
-					let res1 = await createMessages(data);
-					if (res1.statusCode !== 0) {
-						return message.error("转发消息发送失败!");
-					} else {
-						let data = await updateMessageStatus(
-							this.state.data.messageUuid
-						);
-						fromWindow.webContents.send("from-ipc-message", {
-							orgUuid: this.state.data.orgUuid,
-							messageUuid: this.state.data.messageUuid,
-							messageStatus: data.result.messageStatus
-						});
-						message.success("转发成功");
-						setTimeout(() => {
-							window.close();
-						}, 2000);
-					}
-				}
-				
-			}
-		})
-	}
-	// //驳回
-	reject = async () => {
-		this.setState({
-			visible:true,
-			num:4
-		})
-	}
+	
 	read = async () => {
 		let data = await updateMessageStatus(
 			this.state.data.messageUuid
@@ -242,7 +115,6 @@ export default class MessageDeal extends React.Component {
 		}, 2000);
 	};
 	expandedRowRender = (record,index) => {
-		console.log(index)
 		const columns=[
 			{
 				title: '费用类别',
@@ -286,7 +158,6 @@ export default class MessageDeal extends React.Component {
 					);
 				}
 			}]
-		console.log("原始数据",this.state.list)
 		let goodsList = this.state.list[index].reItem.map(item => {
 			return {
 				...item
@@ -295,6 +166,7 @@ export default class MessageDeal extends React.Component {
 		
     	return(
 			<Table
+				style={{margin:0}}
 				columns={columns}
 				rowKey={record => record.id}
         		dataSource={goodsList}
@@ -310,7 +182,7 @@ export default class MessageDeal extends React.Component {
 					position:"absolute",
 					top:"50%",
 					left:"50%",
-					marginTop:"-88px",
+					marginTop:"-280px",
 					marginLeft:'-200px'
 				}}>
 					<Row>
@@ -351,33 +223,6 @@ export default class MessageDeal extends React.Component {
 					<Row type="flex" justify="center">
 						<Button type="primary" style={{marginLeft:12,marginTop:20}} onClick={this.read}>已读</Button>
 					</Row>
-					<Modal
-						title="备注"
-						visible={this.state.visible}
-						onOk={this.handleOk}
-						onCancel={() => {
-							this.setState({
-								visible:false
-							})
-						}}
-					>
-						<Form>
-							<FormItem label="备注">
-							{
-								getFieldDecorator('aa.description',{
-									rules:[
-										{
-											required:true,
-											message:'备注不能为空'
-										}
-									]
-								})(
-									<TextArea />
-								)
-							}
-							</FormItem>
-						</Form>
-					</Modal>
 				</Row>
 			</div>
 		);

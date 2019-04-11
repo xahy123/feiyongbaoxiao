@@ -27,7 +27,6 @@ export const getRecord = async (id) => {
 			}
 		}`
 	};
-	console.log(query)
 	const request = {
 		object: "organization",
 		service_name: "adm_data_service",
@@ -90,7 +89,6 @@ export const cancal = async (id,name,uuid,num) => {
 			}
 		}`
     };
-	console.log(query)
   	const request = {
   		object: 'organization',
   		service_name: 'adm_data_service',
