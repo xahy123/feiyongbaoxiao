@@ -1,6 +1,6 @@
 import React from "react";
 import { remote, ipcRenderer } from "electron";
-import {  message,  Row, Input, Table,  Col,  Button, Modal, Form, Select } from 'antd';
+import {  message,  Row, Input, Table, Tooltip,  Col,  Button, Modal, Form, Select } from 'antd';
 import { updateMessageStatus, createMessages} from "../services/message";
 import { getRecord, cancal, getMember } from "../services/deal";
 import moment from "moment";
@@ -45,7 +45,22 @@ export default class MessageDeal extends React.Component {
             title: '费用报销说明',
             dataIndex: 'reDesc',
             key: 'reDesc',
-            align: 'center'
+			align: 'center',
+			render:text => {
+				if(text){
+					if(text.length>7){
+						return (
+							<Tooltip title={text}>
+								<span>{text.substring(0,7)}……</span>
+							</Tooltip>
+						)
+					}else{
+						return <span>{text}</span>
+					}
+				}else{
+					return <span>未填写</span>
+				}
+			}
         },{
             title: '总额',
             key: 'reJine',
@@ -294,7 +309,18 @@ export default class MessageDeal extends React.Component {
 				title: '说明',
 				dataIndex: 'description',
 				key: 'description',
-				align:"center"
+				align:"center",
+				render:text => {
+					if(text.length>7){
+						return (
+							<Tooltip title={text}>
+								<span>{text.substring(0,7)}……</span>
+							</Tooltip>
+						)
+					}else{
+						return <span>{text}</span>
+					}
+				}
 			}, {
 				title: '报销金额（元）',
 				dataIndex: 'price',
@@ -404,6 +430,7 @@ export default class MessageDeal extends React.Component {
 							this.setState({
 								visible:false
 							})
+							this.props.form.resetFields();
 						}}
 					>
 						<Form>
@@ -431,6 +458,7 @@ export default class MessageDeal extends React.Component {
 							this.setState({
 								forwarVdisible:false
 							})
+							this.props.form.resetFields();
 						}}
 					>
 						<Form>

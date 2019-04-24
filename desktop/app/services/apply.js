@@ -126,7 +126,9 @@ export const applyReimbursement = async (values,courseList) => {
 		query: `mutation{
 			updateExpenseReimburseAskInfo(input:{
 				ireName:"${values.aa.title}"   #费用名称  
-				ireDesc:"${values.aa.introduction.replace(/\n/g,'\\n')}"   #费用报销说明
+				${
+					values.aa.introduction ? `ireDesc:"${values.aa.introduction.replace(/\n/g,'\\n')}"` : ""
+				}
 				ireItem:${formatArr(courseList)}  #费用项明细
 				ipmUshr:"${values.aa.approver.key.split("/")[0]}"   #审批人UUID
 				ipmPshr:"${values.aa.approver.key.split("/")[1]}"   #审批人

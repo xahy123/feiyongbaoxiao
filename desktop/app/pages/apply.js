@@ -42,7 +42,8 @@ export default class PartyMyContribution extends React.Component {
 			title: '说明',
 			dataIndex: 'description',
 			key: 'description',
-			align:"center"
+			align:"center",
+			render: text => text ? text : "未填写"
 		}, {
 			title: '报销金额（元）',
 			dataIndex: 'price',
@@ -107,7 +108,7 @@ export default class PartyMyContribution extends React.Component {
 					},0) //10 
 					let newCourseList = this.state.courseList.map(item => {
 						item.fujian ? item.fujian = JSON.stringify(item.fujian).replace(/\"/g, '\\"') : null
-						item.description ? item.description = item.description.replace(/\n/g,'\\n') : null
+						item.description ? item.description = item.description.replace(/\n/g,'\\n') : "未填写"
 						return item
 					})
 					let res = await service.applyReimbursement(values,newCourseList);
@@ -239,7 +240,7 @@ export default class PartyMyContribution extends React.Component {
 				data.push({
 					title:values.bb.title,
 					price:values.bb.price,
-					description:values.bb.description,
+					description:values.bb.description ? values.bb.description : "未填写",
 					id:moment().format("YYYY-MM-DD HH:MM:SS"),
 					fujian:this.state.fileList1,
 					
@@ -307,13 +308,13 @@ export default class PartyMyContribution extends React.Component {
 						<Col span={span}>
 							<FormItem label="费用报销说明">
 								{getFieldDecorator('aa.introduction', {
-									rules: [
-										{
-											required: true,
-											message: '请输入费用报销说明!',
-											whitespace: true,
-										}
-									],
+									// rules: [
+									// 	{
+									// 		required: true,
+									// 		message: '请输入费用报销说明!',
+									// 		whitespace: true,
+									// 	}
+									// ],
 								})(<TextArea placeholder="请输入费用报销说明" autosize={{ minRows: 2, maxRows: 6 }} />)}
 							</FormItem>
 						</Col>
@@ -467,13 +468,13 @@ export default class PartyMyContribution extends React.Component {
 								<FormItem label="说明">
 									{
 										getFieldDecorator('bb.description',{
-											rules: [
-												{
-													required: true,
-													message: '请输入说明!',
-													whitespace: true,
-												}
-											],
+											// rules: [
+											// 	{
+											// 		required: true,
+											// 		message: '请输入说明!',
+											// 		whitespace: true,
+											// 	}
+											// ],
 										})(
 											<TextArea placeholder="如果是商品请填写规格" autosize={{ minRows: 2, maxRows: 6 }} />
 										)

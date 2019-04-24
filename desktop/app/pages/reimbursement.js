@@ -47,14 +47,18 @@ export default class onDuty extends Component {
             key: 'reDesc',
 			align: 'center',
 			render:text => {
-				if(text.length>7){
-					return (
-						<Tooltip title={text}>
-							<span>{text.substring(0,7)}……</span>
-						</Tooltip>
-					)
+				if(text){
+					if(text.length>7){
+						return (
+							<Tooltip title={text}>
+								<span>{text.substring(0,7)}……</span>
+							</Tooltip>
+						)
+					}else{
+						return <span>{text}</span>
+					}
 				}else{
-					return <span>{text}</span>
+					return <span>未填写</span>
 				}
 			}
         },{
